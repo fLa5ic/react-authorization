@@ -1,0 +1,22 @@
+@import './_variables';
+@import './libs/normalize';
+@import './all';
+
+body {
+  background-color: $bg-color;
+}
+
+.wrapper {
+  width: 440px;
+  height: 372px;
+  background: #FFFFFF;
+  border-radius: 6px;
+  padding: 32px;
+  margin: 50px auto;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
