@@ -1,20 +1,18 @@
-import Header from './components/Header/Header';
-import InputEmail from './components/InputEmail/InputEmail';
-import InputPassword from './components/InputPassword/InputPassword';
-import LogInBtn from './components/LogInBtn/LogInBtn';
+import LogInForm from './components/LogInForm/LogInForm';
+import TwoFactorAuthForm from './components/TwoFactorAuthForm/TwoFactorAuthForm';
 
 import './scss/app.scss';
+
+// if(logInForm) {
+//   return <LogInForm />;
+// }
 
 function App() {
   return (
     <div className="wrapper">
       <div className="content">
-        <Header />
-        <div className="input-container">
-          <InputEmail />
-          <InputPassword />
-          <LogInBtn />
-        </div>
+        {/* <LogInForm /> */}
+        <TwoFactorAuthForm />
       </div>
     </div>
   );

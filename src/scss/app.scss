@@ -1,12 +1,12 @@
 @import './_variables';
 @import './libs/normalize';
-@import './all';
 
 body {
   background-color: $bg-color;
 }
 
 .wrapper {
+  box-sizing: border-box;
   width: 440px;
   height: 372px;
   background: #FFFFFF;
@@ -15,8 +15,7 @@ body {
   margin: 50px auto;
 }
 
-.input-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.content {
+  box-sizing: border-box;
+  width: 376px;
 }

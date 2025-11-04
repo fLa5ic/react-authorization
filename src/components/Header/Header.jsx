@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './Header.module.scss';
 
-const Header = () => {
+const Header = ({title}) => {
   return (
     <div className={styles.header}>
       <div className={styles.logo}>
@@ -19,7 +19,7 @@ const Header = () => {
         </svg>
         <span>Company</span>
       </div>
-      <div className={styles.title}>Sign in to your account to continue</div>
+      <div className={styles.title}>{title}</div>
     </div>
   );
 };
