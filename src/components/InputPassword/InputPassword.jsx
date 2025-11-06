@@ -1,8 +1,11 @@
 import React from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import styles from './InputPassword.module.scss';
 
 const InputPassword = () => {
+  const { register, formState } = useFormContext();
+  const passwordError = formState.errors['password']?.message;
   return (
     <div className={styles.inputPassword}>
       <svg
@@ -18,7 +21,30 @@ const InputPassword = () => {
         />
       </svg>
 
-      <input type="password" placeholder="Password" aria-label="Password" />
+      <input
+        type="password"
+        placeholder="Password"
+        aria-label="Password"
+        {...register('password', {
+          required: 'Password is required',
+          minLength: {
+            value: 6,
+            message: 'Password must be at least 6 characters long',
+          },
+          validate: (value) => {
+            // Проверяем наличие букв
+            const hasLetters = /[a-zA-Z]/.test(value);
+            // Проверяем наличие цифр
+            const hasNumbers = /[0-9]/.test(value);
+
+            if (!hasLetters || !hasNumbers) {
+              return 'Password must contain both letters and numbers';
+            }
+            return true;
+          },
+        })}
+      />
+      {passwordError && <p className={styles.error}>{passwordError}</p>}
     </div>
   );
 };
