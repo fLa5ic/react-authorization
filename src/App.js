@@ -1,5 +1,4 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useForm, FormProvider } from 'react-hook-form';
 import LogInForm from './components/LogInForm/LogInForm';
 import TwoFactorAuthForm from './components/TwoFactorAuthForm/TwoFactorAuthForm';
@@ -8,61 +7,48 @@ import './scss/app.scss';
 
 function App() {
    const methods = useForm({
-      mode: 'onChange', // Валидация при изменении значений
-      reValidateMode: 'onChange', // Повторная валидация при изменении
+      mode: 'onChange',
+      reValidateMode: 'onChange',
    });
 
-   // Состояние: показываем форму входа (true) или форму двухфакторной аутентификации (false)
-   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
-
-   // Состояние загрузки (когда делаем запрос)
+   const [isOnLoginStep, setIsOnLoginStep] = React.useState(true);
    const [isLoading, setIsLoading] = React.useState(false);
 
-   // Функция, которая имитирует запрос на сервер
    const loginUser = async (email, password) => {
-      // Имитируем задержку запроса (1 секунда)
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      return email && password
+         ? { success: true }
+         : { success: false, error: 'Invalid credentials' };
+   };
 
-      // Простая проверка: если email и password есть, считаем что всё ок
-      // В реальном приложении здесь был бы настоящий запрос на сервер
-      if (email && password) {
-         return { success: true };
-      } else {
-         return { success: false, error: 'Invalid credentials' };
+   const handleLogInSubmit = async (data) => {
+      setIsLoading(true);
+      try {
+         const result = await loginUser(data.email, data.password);
+         if (result.success) {
+            setIsOnLoginStep(false);
+         } else {
+            console.error(result.error);
+         }
+      } catch (error) {
+         console.error('Login error:', error);
+      } finally {
+         setIsLoading(false);
       }
    };
 
-   // Функция, которая вызывается при отправке формы
-   const onSubmit = async (data) => {
-      setIsLoading(true); // Начинаем загрузку
-
-      try {
-         // Вызываем функцию логина с данными из формы
-         const result = await loginUser(data.email, data.password);
-
-         if (result.success) {
-            // Если успешно - показываем форму двухфакторной аутентификации
-            setIsLoggedIn(false);
-         } else {
-            // Если ошибка - можно показать сообщение (пока просто в консоль)
-            console.error(result.error);
-            setIsLoading(false);
-         }
-      } catch (error) {
-         // Если произошла ошибка при запросе
-         console.error('Login error:', error);
-         setIsLoading(false);
-      }
+   const handleBackToLogin = () => {
+      setIsOnLoginStep(true);
    };
 
    return (
       <div className="wrapper">
          <FormProvider {...methods}>
             <div className="content">
-               {isLoggedIn ? (
-                  <LogInForm onSubmit={onSubmit} isLoading={isLoading} />
+               {isOnLoginStep ? (
+                  <LogInForm onSubmit={handleLogInSubmit} isLoading={isLoading} />
                ) : (
-                  <TwoFactorAuthForm />
+                  <TwoFactorAuthForm onBack={handleBackToLogin} />
                )}
             </div>
          </FormProvider>
