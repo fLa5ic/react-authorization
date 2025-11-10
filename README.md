@@ -1,3 +1,70 @@
+## React Authorization Flow
+
+This project demonstrates a two-step sign-in experience built with React. It showcases how to combine **react-hook-form** for form state management and validation with **@tanstack/react-query** for handling mutations, optimistic UI, and server-state caching.
+
+### Key Features
+
+- Email/password form with live validation and helpful error messages.
+- Password field validation that ensures minimum length and checks for both letters and numbers.
+- React Query mutation for the primary sign-in flow, including loading and error states.
+- Two-factor authentication step backed by a dedicated React Query mutation.
+- Prefetching of the authenticated user profile after a successful sign-in.
+- React Query Devtools ready for debugging server-state.
+
+### Tech Stack
+
+- React 18
+- react-hook-form
+- @tanstack/react-query
+- Sass modules
+
+### Getting Started
+
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Run the development server**
+   ```bash
+   npm start
+   ```
+
+3. The app is available at `http://localhost:3000`.
+
+### Project Structure (Highlights)
+
+- `src/App.js` – application shell, form provider, and mutation wiring.
+- `src/api/authApi.js` – mocked API calls for sign-in, 2FA, and user info.
+- `src/components/LogInForm` – main login form with email and password inputs.
+- `src/components/TwoFactorAuthForm` – verification step with code inputs and timer.
+- `src/components/UserInfo` – consumer of the prefetched user query (optional showcase).
+
+### Working with Git Branches
+
+All React Query changes live on the `react-query` branch. To create or switch to it locally:
+
+```bash
+git checkout -b react-query
+```
+
+After pushing to GitHub:
+
+```bash
+git push -u origin react-query
+```
+
+### Available Scripts
+
+In addition to `npm start`, the project supports the default Create React App scripts:
+
+- `npm test`
+- `npm run build`
+- `npm run eject`
+
+### License
+
+This project is provided as-is for learning purposes. Customize and reuse it for your own experiments or interviews.
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

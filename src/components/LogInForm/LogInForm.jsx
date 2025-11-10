@@ -7,7 +7,7 @@ import LogInBtn from '../LogInBtn/LogInBtn';
 
 import styles from './LogInForm.module.scss';
 
-const LogInForm = ({ onSubmit, isLoading }) => {
+const LogInForm = ({ onSubmit, isLoading, error }) => {
   const { handleSubmit } = useFormContext();
 
   return (
@@ -16,6 +16,7 @@ const LogInForm = ({ onSubmit, isLoading }) => {
       <div className={styles.inputWrapper}>
         <InputEmail />
         <InputPassword />
+        {error && <div className={styles.submitError}>{error.message || 'Login failed'}</div>}
         <LogInBtn isLoading={isLoading} />
       </div>
     </form>

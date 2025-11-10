@@ -1,59 +1,64 @@
 import React from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import LogInForm from './components/LogInForm/LogInForm';
 import TwoFactorAuthForm from './components/TwoFactorAuthForm/TwoFactorAuthForm';
+import { loginUser, fetchCurrentUser } from './api/authApi';
 
 import './scss/app.scss';
 
 function App() {
-   const methods = useForm({
-      mode: 'onChange',
-      reValidateMode: 'onChange',
-   });
+  const methods = useForm({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+  });
 
-   const [isOnLoginStep, setIsOnLoginStep] = React.useState(true);
-   const [isLoading, setIsLoading] = React.useState(false);
+  const [isOnLoginStep, setIsOnLoginStep] = React.useState(true);
+  const queryClient = useQueryClient();
 
-   const loginUser = async (email, password) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return email && password
-         ? { success: true }
-         : { success: false, error: 'Invalid credentials' };
-   };
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: async () => {
+      await queryClient.prefetchQuery({
+        queryKey: ['currentUser'],
+        queryFn: fetchCurrentUser,
+      });
 
-   const handleLogInSubmit = async (data) => {
-      setIsLoading(true);
-      try {
-         const result = await loginUser(data.email, data.password);
-         if (result.success) {
-            setIsOnLoginStep(false);
-         } else {
-            console.error(result.error);
-         }
-      } catch (error) {
-         console.error('Login error:', error);
-      } finally {
-         setIsLoading(false);
-      }
-   };
+      methods.reset();
+      setIsOnLoginStep(false);
+    },
+    onError: (error) => {
+      console.error('Login error:', error.message);
+    },
+  });
 
-   const handleBackToLogin = () => {
-      setIsOnLoginStep(true);
-   };
+  const handleLogInSubmit = (data) => {
+    loginMutation.mutate({ email: data.email, password: data.password });
+  };
 
-   return (
-      <div className="wrapper">
-         <FormProvider {...methods}>
-            <div className="content">
-               {isOnLoginStep ? (
-                  <LogInForm onSubmit={handleLogInSubmit} isLoading={isLoading} />
-               ) : (
-                  <TwoFactorAuthForm onBack={handleBackToLogin} />
-               )}
-            </div>
-         </FormProvider>
-      </div>
-   );
+  const handleBackToLogin = () => {
+    setIsOnLoginStep(true);
+    methods.reset();
+    queryClient.removeQueries({ queryKey: ['twoFactor'] });
+  };
+
+  return (
+    <div className="wrapper">
+      <FormProvider {...methods}>
+        <div className="content">
+          {isOnLoginStep ? (
+            <LogInForm
+              onSubmit={handleLogInSubmit}
+              isLoading={loginMutation.isPending}
+              error={loginMutation.error}
+            />
+          ) : (
+            <TwoFactorAuthForm onBack={handleBackToLogin} />
+          )}
+        </div>
+      </FormProvider>
+    </div>
+  );
 }
 
 export default App;
